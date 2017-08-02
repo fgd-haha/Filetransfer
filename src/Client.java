@@ -1,6 +1,3 @@
-/**
- * Created on 2016/12/10.
- */
 import java.io.*;
 import java.net.Socket;
 import java.util.Base64;
@@ -9,11 +6,11 @@ class Client {
     private static final String SERVER = "49.140.87.155";
     private static final int PORT = 8888;
     private static final int TIMEOUT = 15000;
-    private static final String FILEPATH = "C:\\Users\\hahaha\\Documents\\包头铁道职业技术学院.docx";
+    private static final String FILEPATH = "D:\\Code\\Python\\StudyNotes\\mysql.md";
 
 
     static void client() {
-        Socket socket = null;
+        Socket socket;
         try{
             socket = new Socket(SERVER, PORT);
             socket.setSoTimeout(TIMEOUT);
