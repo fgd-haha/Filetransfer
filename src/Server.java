@@ -12,9 +12,9 @@ class Server {
     private static final String savePath = "./";
 
     static void server() throws Exception {
-        ServerSocket server = null;
-        try {
-            server = new ServerSocket(PORT);
+
+        try(ServerSocket server = new ServerSocket(PORT)){
+
             System.out.println("Server begin!");
 
             while (true) {
@@ -37,8 +37,6 @@ class Server {
                 receiveFile(in, AESKey);
                 System.out.println("\n\n\n");
             }
-        } catch (IOException ignored) {
-            System.out.println("server closed");
         }
     }
 
@@ -46,7 +44,7 @@ class Server {
     private static void receiveFile(DataInputStream in, String Key) throws Exception {
         System.out.println("Start  receiving:  ");
         String fileName = in.readUTF();
-        long len = 0;
+        long len;
         System.out.println("FileName:  " + fileName);
         len = in.readLong();
         System.out.println("FileSize:  " + len/1024 + " KB");

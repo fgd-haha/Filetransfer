@@ -10,66 +10,61 @@ class Client {
 
 
     static void client() {
-        Socket socket;
-        try{
-            socket = new Socket(SERVER, PORT);
+
+        try (Socket socket = new Socket(SERVER, PORT)) {
+
             socket.setSoTimeout(TIMEOUT);
             DataInputStream in = new DataInputStream(socket.getInputStream());
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 
             String AESKey = AES.getSecretKey();
             String RSAPublicKey = in.readUTF();
-            String AESKeyEncoded = Base64.getEncoder().encodeToString(RSA.encrypt(Base64.getDecoder().decode(AESKey),RSAPublicKey));
+            String AESKeyEncoded = Base64.getEncoder().encodeToString(RSA.encrypt(Base64.getDecoder().decode(AESKey), RSAPublicKey));
 
             out.writeUTF(AESKeyEncoded);
             out.flush();
 
-            sendFile(out,AESKey);
+            sendFile(out, AESKey);
             socket.close();
-        }catch (Exception server){
+        } catch (Exception server) {
             System.out.println("Connect  Failed  !");
         }
     }
 
 
-    private static void sendFile(DataOutputStream out, String AESKey) throws IOException
-    {
-        try
-        {
+    private static void sendFile(DataOutputStream out, String AESKey) throws IOException {
+        try (DataInputStream fileIn = new DataInputStream(new BufferedInputStream(new FileInputStream(FILEPATH)))) {
             File file = new File(FILEPATH);
-            DataInputStream fileIn = new DataInputStream(new BufferedInputStream(new FileInputStream(FILEPATH)));
+
             System.out.println("FileName:  " + file.getName());
             out.writeUTF(file.getName());
             out.flush();
-            System.out.println("FileSize:  " + file.length()/1024 + " KB");
+            System.out.println("FileSize:  " + file.length() / 1024 + " KB");
             out.writeLong(file.length());
             out.flush();
 
             long transfered = 0;
             int transferedRate = 0;
-            while (true)
-            {
+            while (true) {
                 byte[] buf = new byte[4096];
                 int read = fileIn.read(buf);
                 out.writeInt(read);
                 transfered += read;
-                if(read == -1)
+                if (read == -1)
                     break;
                 if ((int) (transfered * 100 / file.length()) > transferedRate) {
                     transferedRate = (int) (transfered * 100 / file.length());
                     System.out.println(transferedRate + "%");
                 }
-                try {
-                    buf = AES.encrypt(buf, AESKey);
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
+
+                buf = AES.encrypt(buf, AESKey);
+
                 String str = Base64.getEncoder().encodeToString(buf);
                 out.writeUTF(str);
                 out.flush();
             }
             System.out.println("Have   Transfered  !");
+
 
         } catch (Exception e) {
             e.printStackTrace();
