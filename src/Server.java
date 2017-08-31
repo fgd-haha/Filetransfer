@@ -6,8 +6,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
 class Server {
+
     private static final int PORT = 8888;
     private static final String savePath = "./";
 
@@ -19,20 +19,19 @@ class Server {
         }
     }
 
-
     private static void startServer() throws Exception {
         ServerSocket server = new ServerSocket(PORT);
         System.out.println("Server begin!");
         ExecutorService pool = Executors.newFixedThreadPool(5);
 
         class socketThread implements Callable<Void> {
+
             private Socket socket;
 
             private socketThread(Socket socket) {
                 this.socket = socket;
             }
 
-            @Override
             public Void call() {
                 try (DataInputStream in = new DataInputStream(socket.getInputStream());
                      DataOutputStream out = new DataOutputStream(socket.getOutputStream())) {
@@ -52,6 +51,7 @@ class Server {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
                 return null;
             }
         }
@@ -63,10 +63,10 @@ class Server {
                 Socket socket = server.accept();
                 Callable<Void> task = new socketThread(socket);
                 pool.submit(task);
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
         }
     }
-
 
     private static void receiveFile(DataInputStream in, String Key) throws Exception {
         System.out.println("Start  receiving:  ");
@@ -87,7 +87,7 @@ class Server {
             }
             if ((int) (received * 100 / len) > receivedRate) {
                 receivedRate = (int) (received * 100 / len);
-                System.out.println(fileName +  "     " + receivedRate + "%");
+                System.out.println(fileName + "     " + receivedRate + "%");
             }
             String str = in.readUTF();
             byte[] buf = AES.decrypt(Base64.getDecoder().decode(str), Key);
@@ -97,4 +97,3 @@ class Server {
         System.out.println("Have Received , Saved as:   " + savePath + fileName);
     }
 }
-

@@ -1,10 +1,9 @@
-
-
 import java.io.*;
 import java.net.Socket;
 import java.util.Base64;
 
 class Client {
+
     private static final String SERVER = "49.140.87.155";
     private static final int PORT = 8888;
     private static final int TIMEOUT = 15000;
