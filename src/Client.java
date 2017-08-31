@@ -1,3 +1,5 @@
+
+
 import java.io.*;
 import java.net.Socket;
 import java.util.Base64;
@@ -6,10 +8,14 @@ class Client {
     private static final String SERVER = "49.140.87.155";
     private static final int PORT = 8888;
     private static final int TIMEOUT = 15000;
-    private static final String FILEPATH = "D:\\Code\\Python\\StudyNotes\\mysql.md";
+    private static String FILEPATH = null;
 
+    public static void main(String[] args) {
+        FILEPATH = args[0];
+        startClient();
+    }
 
-    static void client() {
+    private static void startClient() {
 
         try (Socket socket = new Socket(SERVER, PORT)) {
 
